@@ -30,3 +30,48 @@ docker rm compiler
 ```
 docker rmi sidpro/apache2-php7-java11
 ```
+
+## How to Deploye on Heroku?
+
+To Deploye on Heroku needs [Heroku account](https://signup.heroku.com/login), [Heroku cli](https://devcenter.heroku.com/articles/heroku-cli#download-and-install), [Git](https://git-scm.com/book/en/v2/Getting-Started-Installing-Git).
+
+**Replace CMD command in Docker file**
+```
+CMD ["run-apache2.sh"] 
+# needs to run on local
+#CMD ["/usr/sbin/httpd","-D","FOREGROUND"] 
+```
+**Give permission to Docker**
+
+Replce sidpro with your username
+
+```
+sudo chown sidpro:docker ~/.docker
+sudo chown sidpro:docker ~/.docker/config.json
+sudo chmod g+rw ~/.docker/config.json
+sudo chmod 777 /var/run/docker.sock
+```
+**Login to Heroku & Heroku container**
+```
+heroku login
+# or use this $ heroku login -i
+heroku container:login
+```
+**Initialize Git**
+```
+git init
+git add .
+git commit -m "initial commit"
+```
+**Create App and Push**
+```
+heroku create "lowercaseappname"
+heroku labs:enable --app=lowercaseappname runtime-new-layer-extract
+heroku container:push web
+heroku container:release web
+```
+**Open APP**
+```
+heroku open
+heroku logs --tail
+```
